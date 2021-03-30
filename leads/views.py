@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin
+from agents.mixins import OrganiserAndLoginRequiredMixin
 from .models import Lead, Agent
 from .forms import LeadModelForm, CustomUserCreationForm
 
@@ -26,7 +27,7 @@ class LeadDetailView(LoginRequiredMixin, DetailView):
     queryset = Lead.objects.all()
     context_object_name = "lead"
 
-class LeadCreateView(LoginRequiredMixin, CreateView):
+class LeadCreateView(OrganiserAndLoginRequiredMixin, CreateView):
     template_name = "leads/lead_create.html"
     form_class = LeadModelForm
 
@@ -42,7 +43,7 @@ class LeadCreateView(LoginRequiredMixin, CreateView):
         )
         return super(LeadCreateView, self).form_valid(form)
 
-class LeadUpdateView(LoginRequiredMixin, UpdateView):
+class LeadUpdateView(OrganiserAndLoginRequiredMixin, UpdateView):
     template_name = "leads/lead_update.html"
     queryset = Lead.objects.all()
     form_class = LeadModelForm
@@ -50,7 +51,7 @@ class LeadUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse("leads:lead-list")
 
-class LeadDeleteView(LoginRequiredMixin, DeleteView):
+class LeadDeleteView(OrganiserAndLoginRequiredMixin, DeleteView):
     template_name = "leads/lead-delete.html"
     queryset = Lead.objects.all()
 
