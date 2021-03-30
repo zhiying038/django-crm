@@ -19,8 +19,16 @@ class LandingPageView(TemplateView):
 
 class LeadListView(LoginRequiredMixin, ListView):
     template_name = "leads/lead_list.html"
-    queryset = Lead.objects.all()
     context_object_name = "leads"
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_organiser:
+            query = Lead.objects.filter(organisation=user.userprofile)
+        else:
+            query = Lead.objects.filter(organisation=user.agent.organisation)
+        queryset = queryset.filter(agent__user=user)
+        return queryset
 
 class LeadDetailView(LoginRequiredMixin, DetailView):
     template_name = "leads/lead_detail.html"
